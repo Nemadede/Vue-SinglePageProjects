@@ -79,7 +79,8 @@
                     <input type="text" :value="task.task_name" />
                   </div>
                   <div class="time_dd">
-                    <span>{{time}}</span>
+                    <span>{{task.dueDate}}</span>
+                    <!-- <span>{{date}}</span> -->
                     <i @click="extendfunc($event)">
                       <svg viewBox="0 0 451 451" width="13">
                         <path
@@ -101,9 +102,17 @@
                     <div class="time_btns">
                       <label>Due Date</label>
                       <div id="style">
-                        <button type="button" @click="today">Today</button>
-                        <button type="button" @click="tomorrow">Tomorrow</button>
-                        <datepicker></datepicker>
+                        <button @click="datefunction($event,task)" type="button">Today</button>
+                        <button @click="datefunction($event, task)" type="button">Tomorrow</button>
+                        <datepicker
+                          v-model="date"
+                          lang="en"
+                          type="date"
+                          format="YYYY-MM-DD"
+                          placeholder="no date set"
+                          width="150"
+                          @change="datefunction($event, task)"
+                        ></datepicker>
                       </div>
                     </div>
                     <div class="priorities">
@@ -148,7 +157,7 @@
 </template>
 
 <script>
-import Datepicker from "vuejs-datepicker";
+import Datepicker from "vue2-datepicker";
 export default {
   data() {
     return {
@@ -169,7 +178,10 @@ export default {
             {
               id_task: 0,
               task_name: "Test",
-              extend: false
+              extend: false,
+              priority: "high",
+              dateCreated: "",
+              dueDate: ""
             }
           ]
         }
@@ -178,7 +190,7 @@ export default {
       extended: false,
       // from here down are timing options and some styles
       time: "",
-      date: "2018-10-04",
+      date: "",
       pcolor: "",
       sidecolor: "",
       show: false
@@ -188,6 +200,9 @@ export default {
     Datepicker
   },
   props: ["event"],
+  components: {
+    Datepicker
+  },
   methods: {
     onSubmit() {
       //check if item is empty
@@ -237,12 +252,7 @@ export default {
       this.taskname = "";
       // console.log(this.myWidth);
     },
-    today() {
-      this.time = "today";
-    },
-    tomorrow() {
-      this.time = "tomorrow";
-    },
+
     checkPriority() {
       // let affected = this.$refs.contain;
       if (this.pcolor == "none") {
@@ -274,6 +284,30 @@ export default {
       // } else {
       //   task.extend = false;
       // }
+    },
+    datefunction(event, task) {
+      // console.log(this.date);
+      // console.log(Date.now);
+      let any_other_day = this.date;
+      // date for today
+      let today = Date.now();
+      let curentday = new Date(today);
+      // date for tomorrow
+      let day2 = new Date();
+      let nextDay = day2.setDate(curentday.getDate() + 1);
+      var tomorrowday = new Date(nextDay);
+      //check event emitted and set date per event check
+      if (event.currentTarget == undefined) {
+        task.dueDate = any_other_day.toLocaleDateString();
+      } else {
+        if (event.currentTarget.innerHTML == "Today") {
+          console.log(event.currentTarget);
+          task.dueDate = curentday.toLocaleDateString();
+        } else if (event.currentTarget.innerHTML == "Tomorrow") {
+          console.log(event.currentTarget);
+          task.dueDate = tomorrowday.toLocaleDateString();
+        }
+      }
     }
   }
 };
@@ -494,6 +528,7 @@ body {
                       color: black;
                       display: inline;
                       font-weight: lighter;
+                      outline: none;
                       &:first-child {
                         border-top-left-radius: 8px;
                         border-bottom-left-radius: 8px;
