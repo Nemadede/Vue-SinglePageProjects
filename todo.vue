@@ -3,7 +3,7 @@
     <div class="add" v-show="pagechanger == 0">
       <nav>
         <div class="newList">
-          <button v-show="value==1" @click="toggle = !toggle">New List</button>
+          <button v-bind:class="[value==1 ? '':'inNouse']" @click="toggle = !toggle">New List</button>
           <!-- form one -->
           <form @submit.prevent="onSubmit" v-show="toggle == true" ref="form">
             <label for="name">list name</label>
@@ -17,10 +17,10 @@
           <!-- end form one -->
         </div>
         <div id="todo_main_btns">
-          <button @click="value = 1">Lists</button>
+          <button @click="value = 1" v-bind:class="[value == 1 ? 'active':'']">Lists</button>
 
-          <button @click="value=2">Today</button>
-          <button @click="value=3">Schedule</button>
+          <button @click="value=2" v-bind:class="[value == 2 ? 'active':'']">Today</button>
+          <button @click="value=3" v-bind:class="[value == 3 ? 'active':'']">Schedule</button>
         </div>
         <div></div>
       </nav>
@@ -39,10 +39,197 @@
               </div>
             </div>
           </div>
-          <!-- <span>No list creates</span> -->
         </section>
-        <section v-if="value == 2">This is section two</section>
-        <section v-if="value == 3">This is section three</section>
+        <!-- second section -->
+        <section v-if="value == 2">
+          <div class="body_second">
+            <div class="body_second_container">
+              <div class="todo_list_container">
+                <div class="todos">
+                  <form action>
+                    <div id="displayed">
+                      <div class="checked">
+                        <input type="checkbox" />
+                      </div>
+                      <div class="nameholder">
+                        <input type="text" />
+                      </div>
+                      <div class="time_dd">
+                        <span></span>
+                        <!-- <span>{{date}}</span> -->
+                        <i @click="extendfunc($event,task)">
+                          <svg viewBox="0 0 451 451" width="13">
+                            <path
+                              d="M225.923,354.706c-8.098,0-16.195-3.092-22.369-9.263L9.27,151.157c-12.359-12.359-12.359-32.397,0-44.751
+		c12.354-12.354,32.388-12.354,44.748,0l171.905,171.915l171.906-171.909c12.359-12.354,32.391-12.354,44.744,0
+		c12.365,12.354,12.365,32.392,0,44.751L248.292,345.449C242.115,351.621,234.018,354.706,225.923,354.706z"
+                              fill="#000"
+                            />
+                          </svg>
+                        </i>
+                      </div>
+                    </div>
+
+                    <div class="toggled extension">
+                      <div class="notes_container">
+                        <label>Notes</label>
+                        <textarea cols="35" rows="14"></textarea>
+                      </div>
+                      <div class="time_priority">
+                        <div class="time_btns">
+                          <label>Due Date</label>
+                          <div id="style">
+                            <button @click="datefunction($event,task)" type="button">Today</button>
+                            <button @click="datefunction($event, task)" type="button">Tomorrow</button>
+                            <datepicker
+                              v-model="date"
+                              lang="en"
+                              type="date"
+                              format="YYYY-MM-DD"
+                              placeholder="no date set"
+                              width="150"
+                              @change="datefunction($event, task)"
+                            ></datepicker>
+                          </div>
+                        </div>
+                        <div class="priorities">
+                          <label>Priority</label>
+                          <select id="pcolor_selector" @change="checkPriority" v-model="pcolor">
+                            <option value="none">None</option>
+                            <option value="blue">Low</option>
+                            <option value="orange">Medium</option>
+                            <option value="red">High</option>
+                          </select>
+                        </div>
+                        <div class="del">
+                          <button type="button" @click="deleteTask">delete</button>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="wrapper">
+              <div class="todoMaker">
+                <div class="adder">
+                  <i @click="nameTodo(name)">plus</i>
+                </div>
+
+                <div class="namer">
+                  <input
+                    @keyup.enter="nameTodo(name)"
+                    type="text"
+                    id="todo_name"
+                    v-model="taskname"
+                    placeholder="New task..."
+                    required
+                  />
+                </div>
+                <div class="list_option">
+                  <button type="button">
+                    <span></span> Computer
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- third section -->
+        <section v-if="value == 3">
+          <div class="body_second">
+            <div class="body_second_container">
+              <div class="todo_list_container">
+                <div class="todos">
+                  <form action>
+                    <div id="displayed">
+                      <div class="checked">
+                        <input type="checkbox" />
+                      </div>
+                      <div class="nameholder">
+                        <input type="text" />
+                      </div>
+                      <div class="time_dd">
+                        <span></span>
+                        <!-- <span>{{date}}</span> -->
+                        <i @click="extendfunc($event,task)">
+                          <svg viewBox="0 0 451 451" width="13">
+                            <path
+                              d="M225.923,354.706c-8.098,0-16.195-3.092-22.369-9.263L9.27,151.157c-12.359-12.359-12.359-32.397,0-44.751
+		c12.354-12.354,32.388-12.354,44.748,0l171.905,171.915l171.906-171.909c12.359-12.354,32.391-12.354,44.744,0
+		c12.365,12.354,12.365,32.392,0,44.751L248.292,345.449C242.115,351.621,234.018,354.706,225.923,354.706z"
+                              fill="#000"
+                            />
+                          </svg>
+                        </i>
+                      </div>
+                    </div>
+
+                    <div class="toggled extension">
+                      <div class="notes_container">
+                        <label>Notes</label>
+                        <textarea cols="35" rows="14"></textarea>
+                      </div>
+                      <div class="time_priority">
+                        <div class="time_btns">
+                          <label>Due Date</label>
+                          <div id="style">
+                            <button @click="datefunction($event,task)" type="button">Today</button>
+                            <button @click="datefunction($event, task)" type="button">Tomorrow</button>
+                            <datepicker
+                              v-model="date"
+                              lang="en"
+                              type="date"
+                              format="YYYY-MM-DD"
+                              placeholder="no date set"
+                              width="150"
+                              @change="datefunction($event, task)"
+                            ></datepicker>
+                          </div>
+                        </div>
+                        <div class="priorities">
+                          <label>Priority</label>
+                          <select id="pcolor_selector" @change="checkPriority" v-model="pcolor">
+                            <option value="none">None</option>
+                            <option value="blue">Low</option>
+                            <option value="orange">Medium</option>
+                            <option value="red">High</option>
+                          </select>
+                        </div>
+                        <div class="del">
+                          <button type="button" @click="deleteTask">delete</button>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="wrapper">
+              <div class="todoMaker">
+                <div class="adder">
+                  <i @click="nameTodo(name)">plus</i>
+                </div>
+
+                <div class="namer">
+                  <input
+                    @keyup.enter="nameTodo(name)"
+                    type="text"
+                    id="todo_name"
+                    v-model="taskname"
+                    placeholder="New task..."
+                    required
+                  />
+                </div>
+                <div class="list_option">
+                  <button type="button">
+                    <span></span> Computer
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
 
@@ -67,6 +254,7 @@
             <div
               v-for="(task,index) in name.tasklist"
               class="todos"
+              :id="'tasks' + index "
               ref="contain"
               :key="task.taskid"
             >
@@ -81,7 +269,7 @@
                   <div class="time_dd">
                     <span>{{task.dueDate}}</span>
                     <!-- <span>{{date}}</span> -->
-                    <i @click="extendfunc($event)">
+                    <i @click="extendfunc($event,task)">
                       <svg viewBox="0 0 451 451" width="13">
                         <path
                           d="M225.923,354.706c-8.098,0-16.195-3.092-22.369-9.263L9.27,151.157c-12.359-12.359-12.359-32.397,0-44.751
@@ -93,7 +281,7 @@
                     </i>
                   </div>
                 </div>
-                <div v-show=" extended == true" id="extension">
+                <div v-show=" task.extend == true" :id="'extension_'+index " class="extension">
                   <div class="notes_container">
                     <label>Notes</label>
                     <textarea cols="35" rows="14"></textarea>
@@ -177,7 +365,7 @@ export default {
           tasklist: [
             {
               id_task: 0,
-              task_name: "Test",
+              task_name: "Sample",
               extend: false,
               priority: "high",
               dateCreated: "",
@@ -276,14 +464,29 @@ export default {
       let namer = this.$refs.tNamer.value;
       this.taskNames.pop(namer);
     },
-    extendfunc(event) {
-      this.extended = !this.extended;
-      console.log(event.currentTarget);
-      // if (this.extended == true) {
-      //   task.extend = true;
-      // } else {
-      //   task.extend = false;
+    closeAll() {
+      // console.log(document.querySelector(".extension"));
+      document.querySelector(".extension").classList.remove("dropdownClass");
+    },
+    extendfunc(e, task) {
+      // this.closeAll();
+      let others = document.querySelector(".extension");
+      let parent = e.currentTarget.parentElement.parentElement;
+      // console.log(others);
+      // for (let i = 0; i < others.length; i++) {
+      //   if (others[i] != parent.id) {
+      //     others[i].classList.remove("dropdownClass");
+      //   }
       // }
+      parent.nextSibling.classList.toggle("dropdownClass");
+
+      if (parent.nextSibling.classList.contains("dropdownClass")) {
+        // console.log("1");
+        task.extend = true;
+      } else {
+        // console.log("0");
+        task.extend = false;
+      }
     },
     datefunction(event, task) {
       // console.log(this.date);
@@ -328,6 +531,7 @@ body {
     font-size: 14px;
     transition: all 500ms ease;
   }
+
   .add {
     nav {
       display: flex;
@@ -341,6 +545,9 @@ body {
         button {
           border-radius: 8px;
           background-color: #eee;
+        }
+        .inNouse {
+          visibility: hidden;
         }
         form {
           background-color: #fff;
@@ -389,20 +596,24 @@ body {
           background-color: #eee;
           outline: none;
           &:nth-child(1) {
-            border-top-left-radius: 10px;
-            border-bottom-left-radius: 10px;
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
           }
           &:nth-child(2) {
             border-left-color: rgba(87, 85, 85, 0.335);
             border-right-color: rgba(87, 85, 85, 0.335);
           }
           &:nth-child(3) {
-            border-top-right-radius: 10px;
-            border-bottom-right-radius: 10px;
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
           }
           &:hover {
-            background-color: rgb(129, 129, 129);
+            background-color: rgb(184, 183, 183);
           }
+        }
+        .active {
+          background-color: #666;
+          color: #eee;
         }
       }
     }
@@ -467,144 +678,162 @@ body {
         width: 50%;
         margin: 30px auto;
         border: 1px solid transparent;
-        .todos {
-          border: 1px solid transparent;
+        .dropdownClass {
+          background-color: red;
+        }
+      }
+    }
+  }
+  .todos {
+    border: 1px solid transparent;
 
-          form {
-            box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.253);
-            width: 70%;
-            margin: 10px auto;
-            border-radius: 3px;
-            border: 1px solid transparent;
-            border-left: 5px solid transparent;
-            label {
-              display: block;
-              padding-bottom: 8px;
-              font-weight: bold;
-              color: rgb(4, 27, 4);
-            }
-            #displayed {
-              display: flex;
-              border: 1px solid transparent;
-              // border-bottom-color: rgba(0, 0, 0, 0.2);
-              align-items: center;
-              position: relative;
-              border-radius: 3px;
-              .nameholder {
-                padding: 10px 5px;
-                flex-grow: 1;
-                input {
-                  font-size: 14px;
-                  border: none;
-                  max-width: 400px;
-                }
-              }
-              .time_dd {
-                i {
-                  padding: 0px 5px;
-                }
-              }
-            }
-            #extension {
-              display: flex;
-              padding: 10px 15px;
-              .notes_container {
-                margin-right: 10px;
-                textarea {
-                  resize: none;
-                  border: 1px solid rgba(0, 0, 0, 0.2);
-                }
-              }
-              .time_priority {
-                display: grid;
-                .time_btns {
-                  // border: 1px solid salmon;
-                  #style {
-                    border: 1px solid rgba(0, 0, 0, 0.164);
-                    border-radius: 8px;
-                    button {
-                      padding: 3px 10px;
-                      background-color: rgb(255, 255, 255);
-                      color: black;
-                      display: inline;
-                      font-weight: lighter;
-                      outline: none;
-                      &:first-child {
-                        border-top-left-radius: 8px;
-                        border-bottom-left-radius: 8px;
-                      }
-                    }
-                    input {
-                      padding: 3px 0px;
-                      display: inline;
-                      border: 1px solid transparent;
-                      border-top-right-radius: 8px;
-                      border-bottom-right-radius: 8px;
-                      :read-write &::placeholder {
-                        content: "hee";
-                      }
-                    }
-                  }
-                }
-                .priorities {
-                  // border: 1px solid salmon;
-                  text-align: left;
-                  justify-self: flex-end;
-                  select {
-                    width: 300px;
-                    background-color: #fff;
-                    padding: 3px 0px;
-                    border: 1px solid rgba(128, 128, 128, 0.253);
-                    border-radius: 8px;
-                    cursor: pointer;
-                    outline: none;
-                  }
-                }
-                .del {
-                  // border: 1px solid salmon;
-                  margin-bottom: 5px;
-                  align-self: end;
-                  justify-self: flex-end;
-                  button {
-                    width: 100px;
-                    padding: 5px 6px;
-                    border-radius: 10px;
-                    background-color: orangered;
-                  }
-                }
-              }
-            }
+    form {
+      box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.253);
+      width: 70%;
+      margin: 10px auto;
+      border-radius: 3px;
+      border: 1px solid transparent;
+      border-left: 5px solid transparent;
+      label {
+        display: block;
+        padding-bottom: 8px;
+        font-weight: bold;
+        color: rgb(4, 27, 4);
+      }
+      #displayed {
+        display: flex;
+        border: 1px solid transparent;
+        // border-bottom-color: rgba(0, 0, 0, 0.2);
+        align-items: center;
+        position: relative;
+        border-radius: 3px;
+        .nameholder {
+          padding: 10px 5px;
+          flex-grow: 1;
+          input {
+            font-size: 14px;
+            border: none;
+            max-width: 400px;
           }
         }
-        .todoMaker {
-          display: flex;
-          width: 70%;
-          margin: 10px auto;
-          border: 1px solid rgba(0, 0, 0, 0.2);
-          box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.253);
-          align-items: center;
-          position: relative;
-          border-radius: 3px;
-          .adder {
-            i {
-              color: purple;
-              padding: 10px 1px;
+        .time_dd {
+          i {
+            padding: 0px 5px;
+          }
+        }
+      }
+
+      .extension {
+        display: flex;
+        padding: 10px 15px;
+        .notes_container {
+          margin-right: 10px;
+          textarea {
+            resize: none;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+          }
+        }
+        .time_priority {
+          display: grid;
+          .time_btns {
+            // border: 1px solid salmon;
+            #style {
+              border: 1px solid rgba(0, 0, 0, 0.164);
+              border-radius: 8px;
+              button {
+                padding: 3px 10px;
+                background-color: rgb(255, 255, 255);
+                color: black;
+                display: inline;
+                font-weight: lighter;
+                outline: none;
+                &:first-child {
+                  border-top-left-radius: 8px;
+                  border-bottom-left-radius: 8px;
+                }
+              }
+              input {
+                padding: 3px 0px;
+                display: inline;
+                border: 1px solid transparent;
+                border-top-right-radius: 8px;
+                border-bottom-right-radius: 8px;
+                :read-write &::placeholder {
+                  content: "hee";
+                }
+              }
             }
           }
-          .namer {
-            width: 99%;
-            position: relative;
-            object-fit: fill;
-            input {
-              border: 1px solid transparent;
-              padding: 10px 0px 10px 5px;
+          .priorities {
+            // border: 1px solid salmon;
+            text-align: left;
+            justify-self: flex-end;
+            select {
+              width: 300px;
+              background-color: #fff;
+              padding: 3px 0px;
+              border: 1px solid rgba(128, 128, 128, 0.253);
+              border-radius: 8px;
+              cursor: pointer;
               outline: none;
-              width: 99%;
-              font-size: 16px;
+            }
+          }
+          .del {
+            // border: 1px solid salmon;
+            margin-bottom: 5px;
+            align-self: end;
+            justify-self: flex-end;
+            button {
+              width: 100px;
+              padding: 5px 6px;
+              border-radius: 10px;
+              background-color: orangered;
             }
           }
         }
       }
+    }
+  }
+  .todoMaker {
+    display: flex;
+    width: 70%;
+    margin: 10px auto;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.253);
+    align-items: center;
+    position: relative;
+    border-radius: 3px;
+    .adder {
+      i {
+        color: purple;
+        padding: 10px 1px;
+      }
+    }
+    .namer {
+      width: 99%;
+      position: relative;
+      object-fit: fill;
+      input {
+        border: 1px solid transparent;
+        padding: 10px 0px 10px 5px;
+        outline: none;
+        width: 99%;
+        font-size: 16px;
+      }
+    }
+  }
+
+  .body_second {
+    // background: #000;
+    width: 100%;
+    .body_second_container {
+      width: 50%;
+      // background-color: red;
+      margin: 30px auto;
+    }
+    .wrapper {
+      width: 50%;
+      margin: 10px auto;
     }
   }
 }
