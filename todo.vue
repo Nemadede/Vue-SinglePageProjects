@@ -42,20 +42,20 @@
         </section>
         <!-- second section -->
         <section v-if="value == 2">
-          <div class="body_second">
-            <div class="body_second_container">
-              <div class="todo_list_container">
-                <div class="todos">
+          <div class="body_second" id="second_tab">
+            <div class="body_second_container" v-for="(name, index) in names" :key="name.id">
+              <div class="todo_list_container" v-for="(task) in name.tasklist" :key="task.id">
+                <div class="todos" v-if="task.dueDate == 'Today' ">
                   <form action>
                     <div id="displayed">
                       <div class="checked">
                         <input type="checkbox" />
                       </div>
                       <div class="nameholder">
-                        <input type="text" />
+                        <input type="text" :value="task.task_name" />
                       </div>
                       <div class="time_dd">
-                        <span></span>
+                        <span>{{name.name}}</span>
                         <!-- <span>{{date}}</span> -->
                         <i @click="extendfunc($event,task)">
                           <svg viewBox="0 0 451 451" width="13">
@@ -70,7 +70,7 @@
                       </div>
                     </div>
 
-                    <div class="toggled extension">
+                    <div class="toggled extension" v-show="extended == true">
                       <div class="notes_container">
                         <label>Notes</label>
                         <textarea cols="35" rows="14"></textarea>
@@ -130,6 +130,11 @@
                   <button type="button">
                     <span></span> Computer
                   </button>
+                  <div class="lists" v-for="name in names" v-bind:key="name.id">
+                    <!-- <ul>
+                      <li>{{name.name}}</li>
+                    </ul>-->
+                  </div>
                 </div>
               </div>
             </div>
@@ -137,9 +142,9 @@
         </section>
         <!-- third section -->
         <section v-if="value == 3">
-          <div class="body_second">
-            <div class="body_second_container">
-              <div class="todo_list_container">
+          <div class="body_second" id="third_tab">
+            <div class="body_second_container" v-for="name in names" :key="name.id">
+              <div class="todo_list_container" v-for="task in name.tasklist" :key="task.id">
                 <div class="todos">
                   <form action>
                     <div id="displayed">
@@ -147,10 +152,10 @@
                         <input type="checkbox" />
                       </div>
                       <div class="nameholder">
-                        <input type="text" />
+                        <input type="text" :value="task.task_name" />
                       </div>
                       <div class="time_dd">
-                        <span></span>
+                        <span>{{name.name}}</span>
                         <!-- <span>{{date}}</span> -->
                         <i @click="extendfunc($event,task)">
                           <svg viewBox="0 0 451 451" width="13">
@@ -165,7 +170,7 @@
                       </div>
                     </div>
 
-                    <div class="toggled extension">
+                    <div class="toggled extension" v-show="extended == true">
                       <div class="notes_container">
                         <label>Notes</label>
                         <textarea cols="35" rows="14"></textarea>
@@ -225,6 +230,11 @@
                   <button type="button">
                     <span></span> Computer
                   </button>
+                  <div class="lists" v-for="name in names" v-bind:key="name.id">
+                    <!-- <ul>
+                      <li>{{name.name}}</li>
+                    </ul>-->
+                  </div>
                 </div>
               </div>
             </div>
@@ -502,13 +512,16 @@ export default {
       //check event emitted and set date per event check
       if (event.currentTarget == undefined) {
         task.dueDate = any_other_day.toLocaleDateString();
+        this.date = any_other_day.toLocaleDateString();
       } else {
         if (event.currentTarget.innerHTML == "Today") {
           console.log(event.currentTarget);
-          task.dueDate = curentday.toLocaleDateString();
+          task.dueDate = "Today";
+          this.date = curentday.toLocaleDateString();
         } else if (event.currentTarget.innerHTML == "Tomorrow") {
           console.log(event.currentTarget);
-          task.dueDate = tomorrowday.toLocaleDateString();
+          task.dueDate = "Tomorow";
+          this.date = tomorrowday.toLocaleDateString();
         }
       }
     }
