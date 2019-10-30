@@ -32,6 +32,9 @@
               <div>
                 <div @click="pagechangerfunc(name)" id="box">
                   <a v-show="show == true">{{index}}</a>
+                  <ul v-for="task in name.tasklist" :key="task.id">
+                    <li>{{task.task_name}}</li>
+                  </ul>
                 </div>
                 <div class="box_name" @click="pagechangerfunc(name)" ref="spec_title">
                   <span>{{name.name}}</span>
@@ -113,12 +116,12 @@
             <div class="wrapper">
               <div class="todoMaker">
                 <div class="adder">
-                  <i @click="nameTodo(name)">plus</i>
+                  <i @click="nameTodo2(schedule_list_apportion)">plus</i>
                 </div>
 
                 <div class="namer">
                   <input
-                    @keyup.enter="nameTodo(name)"
+                    @keyup.enter="nameTodo2(schedule_list_apportion)"
                     type="text"
                     id="todo_name"
                     v-model="taskname"
@@ -127,13 +130,19 @@
                   />
                 </div>
                 <div class="list_option">
-                  <button type="button">
-                    <span></span> Computer
+                  <button type="button" @click="toggler = !toggler">
+                    <span></span>
+                    {{schedule_list_apportion}}
                   </button>
-                  <div class="lists" v-for="name in names" v-bind:key="name.id">
-                    <!-- <ul>
-                      <li>{{name.name}}</li>
-                    </ul>-->
+                  <div
+                    class="lists"
+                    v-for="name in names"
+                    v-bind:key="name.id"
+                    v-show="toggler == true"
+                  >
+                    <ul>
+                      <li @click="setOption($event)">{{name.name}}</li>
+                    </ul>
                   </div>
                 </div>
               </div>
@@ -213,12 +222,12 @@
             <div class="wrapper">
               <div class="todoMaker">
                 <div class="adder">
-                  <i @click="nameTodo(name)">plus</i>
+                  <i @click="nameTodo2">plus</i>
                 </div>
 
                 <div class="namer">
                   <input
-                    @keyup.enter="nameTodo(name)"
+                    @keyup.enter="nameTodo2"
                     type="text"
                     id="todo_name"
                     v-model="taskname"
@@ -268,10 +277,10 @@
               ref="contain"
               :key="task.taskid"
             >
-              <form :style="{'border-left-color':sidecolor }">
+              <form :style="{'border-left-color':task.priority }">
                 <div id="displayed">
                   <div class="checked">
-                    <input type="checkbox" />
+                    <input type="checkbox" @change="doneTask($event)" />
                   </div>
                   <div class="nameholder">
                     <input type="text" :value="task.task_name" />
@@ -315,7 +324,7 @@
                     </div>
                     <div class="priorities">
                       <label>Priority</label>
-                      <select id="pcolor_selector" @change="checkPriority" v-model="pcolor">
+                      <select id="pcolor_selector" @change="checkPriority(task)" v-model="pcolor">
                         <option value="none">None</option>
                         <option value="blue">Low</option>
                         <option value="orange">Medium</option>
@@ -323,7 +332,7 @@
                       </select>
                     </div>
                     <div class="del">
-                      <button type="button" @click="deleteTask">delete</button>
+                      <button type="button" @click="deleteTask(name,task)">delete</button>
                     </div>
                   </div>
                 </div>
@@ -370,14 +379,14 @@ export default {
       names: [
         {
           id: 1,
-          name: "computer",
+          name: "Computer",
           is_in_use: false,
           tasklist: [
             {
               id_task: 0,
               task_name: "Sample",
               extend: false,
-              priority: "high",
+              priority: "transparent",
               dateCreated: "",
               dueDate: ""
             }
@@ -391,7 +400,9 @@ export default {
       date: "",
       pcolor: "",
       sidecolor: "",
-      show: false
+      show: false,
+      schedule_list_apportion: "Computer",
+      toggler: false
     };
   },
   components: {
@@ -435,12 +446,9 @@ export default {
       }
     },
     nameTodo(name) {
-      // if (name.tasklist.taskid == 0) {
-      //   return;
-      // }
       console.log(this.taskname);
       name.tasklist.push({
-        id: 1,
+        id: this.nexttaskid,
         task_name: this.taskname,
         extend: false
       });
@@ -451,50 +459,51 @@ export default {
       // console.log(this.myWidth);
     },
 
-    checkPriority() {
+    checkPriority(task) {
       // let affected = this.$refs.contain;
       if (this.pcolor == "none") {
         // console.log(this.pcolor);
         this.sidecolor = "transparent";
+        task.priority = this.sidecolor;
       } else if (this.pcolor == "blue") {
         // console.log(this.pcolor);
         this.sidecolor = this.pcolor;
+        task.priority = this.sidecolor;
       } else if (this.pcolor == "orange") {
         // console.log(this.pcolor);
         this.sidecolor = this.pcolor;
+        task.priority = this.sidecolor;
       } else if (this.pcolor == "red") {
         // console.log(this.pcolor);
         this.sidecolor = this.pcolor;
+        task.priority = this.sidecolor;
       } else {
         // console.log("none");
         this.sidecolor = "none";
+        task.priority = this.sidecolor;
       }
     },
-    deleteTask() {
-      let namer = this.$refs.tNamer.value;
-      this.taskNames.pop(namer);
+    deleteTask(name, task) {
+      // let namer = this.$refs.tNamer.value;
+      // this.taskNames.pop(namer);
+      name.tasklist.pop(task);
+    },
+    doneTask(e) {
+      let form = e.currentTarget.parentElement.parentElement.parentElement;
+      form.style.display = "none";
+      console.log(form);
     },
     closeAll() {
-      // console.log(document.querySelector(".extension"));
       document.querySelector(".extension").classList.remove("dropdownClass");
     },
     extendfunc(e, task) {
-      // this.closeAll();
       let others = document.querySelector(".extension");
       let parent = e.currentTarget.parentElement.parentElement;
-      // console.log(others);
-      // for (let i = 0; i < others.length; i++) {
-      //   if (others[i] != parent.id) {
-      //     others[i].classList.remove("dropdownClass");
-      //   }
-      // }
       parent.nextSibling.classList.toggle("dropdownClass");
 
       if (parent.nextSibling.classList.contains("dropdownClass")) {
-        // console.log("1");
         task.extend = true;
       } else {
-        // console.log("0");
         task.extend = false;
       }
     },
@@ -524,6 +533,33 @@ export default {
           this.date = tomorrowday.toLocaleDateString();
         }
       }
+    },
+    setOption(e) {
+      console.log(e.currentTarget.innerHTML);
+      this.schedule_list_apportion = e.currentTarget.innerHTML;
+    },
+    nameTodo2(sname) {
+      console.log(sname);
+
+      this.names.forEach(obj => {
+        console.log(obj);
+        if (sname == obj.name) {
+          console.log("1");
+          obj.tasklist.push({
+            id: this.nexttaskid,
+            task_name: this.taskname,
+            extend: false,
+            dueDate: "Today"
+          });
+          this.nexttaskid++;
+          this.counter++;
+          this.taskname = "";
+        }
+      });
+
+      this.nexttaskid++;
+      this.counter++;
+      this.taskname = "";
     }
   }
 };
@@ -692,7 +728,7 @@ body {
         margin: 30px auto;
         border: 1px solid transparent;
         .dropdownClass {
-          background-color: red;
+          background-color: rgb(255, 255, 255);
         }
       }
     }
